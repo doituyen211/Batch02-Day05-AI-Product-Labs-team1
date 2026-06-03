@@ -1,90 +1,118 @@
-# Workshop — Mổ App AI Thật
+# Template — Thin SPEC Cuối Day 05
 
-**Thời gian:** 35-45 phút  
-**Hình thức:** cá nhân trước, chia sẻ theo nhóm sau  
-**Output:** finding note + sketch `as-is / to-be`
+---
 
-Mục tiêu không phải chấm "UI đẹp hay xấu". Mục tiêu là dùng sản phẩm thật như một bài needfinding: tìm chỗ product gãy trong workflow thật, rồi viết finding đó thành quyết định product.
+## 1. Track, product/app và user
 
-## 1. Chọn một sản phẩm để dùng thử
+**Track:** Food & Local Delivery
 
-| Sản phẩm | AI feature | Cách truy cập |
-|---|---|---|
-| MoMo — Moni | Trợ thủ tài chính, phân tích chi tiêu, chatbot | App MoMo |
-| Vietnam Airlines — NEO | Chatbot hỗ trợ vé, hành lý, khiếu nại | Website/Zalo VNA |
-| V-App — V-AI | Trợ lý voice/text, gợi ý theo ngữ cảnh | App V-App |
+**Product/app thật:** GrabFood / ShopeeFood
 
-## 2. Dùng thử: promise vs reality
+**User cụ thể:**
 
-Ghi nhanh:
+- Tài xế (người gặp sự cố)
+- Khách hàng (người cần giải quyết đơn hàng)
 
-- Product hứa gì?
-- User nào được hứa sẽ được giúp?
-- Bạn kỳ vọng AI làm được task nào?
-- Khi dùng thật, điểm gãy xuất hiện ở đâu?
+**Nhóm có phải user thật không? Nếu không, khác ở đâu?**  
+Có. Các thành viên đều là end-user thường xuyên sử dụng food delivery và từng gặp tình huống bị hủy đơn do lỡ cuộc gọi của tài xế hoặc quán hết món.
 
-Evidence cần có:
+---
 
-- screenshot,
-- quote từ app/web/review,
-- prompt/input đã thử,
-- hành vi quan sát được.
+## 2. Evidence summary
 
-## 3. Vẽ 4 paths
+| Evidence                                                     | Nguồn        | User / pain nói lên điều gì?                             | SPEC phải đổi gì?                                                              |
+| ------------------------------------------------------------ | ------------ | -------------------------------------------------------- | ------------------------------------------------------------------------------ |
+| Đơn bị hủy vì khách không nghe máy xác nhận đổi món          | Group tài xế | Nút thắt cổ chai nằm ở cuộc gọi điện thoại thủ công      | Phải làm UI notification in-app để khách quyết định 1-chạm                     |
+| Review chửi vì tài xế tự đổi trà đào sang trà vải gây dị ứng | App Store    | Đổi món sai gây hậu quả nghiêm trọng hơn cả việc hủy đơn | AI không được đoán mò → cần cơ chế failure / veto (score = 0 → human fallback) |
 
-| Path | Câu hỏi cần trả lời |
-|---|---|
-| Happy | Khi AI đúng và tự tin, user thấy gì? |
-| Low-confidence | Khi AI không chắc, hệ thống có hỏi lại, show options hoặc chuyển người không? |
-| Failure | Khi AI sai, user biết bằng cách nào và sửa thế nào? |
-| Correction | Khi user sửa, correction có được lưu/log/học lại không hay biến mất? |
+---
 
-## 4. Viết finding thành quyết định
+## 3. Pain statement
 
-Không viết:
+User **(tài xế và khách hàng)** đang gặp khó ở **bước xử lý sự cố hết món tại quán**,  
+vì **hệ thống hiện tại bắt buộc phải gọi điện thoại thủ công**,  
+dẫn tới:
 
-```text
-Bot ngu, trả lời sai.
-```
+- tài xế mất thời gian chờ và xử lý
+- khách hàng dễ bị hủy đơn oan nếu đang bận / không nghe máy
 
-Viết:
+Bằng chứng chính là **hàng loạt review 1 sao và phản ánh từ cộng đồng tài xế về giao thiếu món hoặc hủy đơn không rõ lý do**.
 
-```text
-Khi user [trigger],
-AI/product [failure],
-hậu quả là [impact].
-Lỗi thuộc layer [promise / intent / data-tool / safety / UX recovery].
-Nên sửa bằng [requirement / UX / fallback / human role / test case].
-```
+---
 
-Ví dụ:
+## 4. Build slice
 
-```text
-Khi user hỏi "chi tiêu linh tinh là gì?",
-AI hiểu như keyword thay vì nhận ra intent mơ hồ,
-hậu quả là user không biết sửa phân loại chi tiêu ở đâu.
-Lỗi thuộc Intent + UX Recovery.
-Nên sửa bằng low-confidence path: hỏi lại tiêu chí hoặc đưa 2-3 nhóm giao dịch để chọn.
-```
+Cho **khách hàng** đang **chờ giao đơn food delivery**,  
+prototype sẽ dùng AI để:
 
-## 5. Sketch as-is / to-be
+- automate việc đổi món khi đủ chắc chắn
+- hoặc augment bằng cách gợi ý lựa chọn trong app theo confidence score
 
-Vẽ 2 cột:
+Tạo ra:
 
-- **As-is:** flow hiện tại, đánh dấu điểm gãy.
-- **To-be:** flow đề xuất, đánh dấu path đã sửa.
+- **Push notification UI cho khách xác nhận trong 30–60 giây**
 
-Không cần đẹp. Cần nhìn vào là hiểu:
+Xử lý failure mode:
 
-- user làm gì,
-- AI làm gì,
-- lúc AI không chắc thì sao,
-- lúc AI sai user recover thế nào.
+- nếu AI không tìm được phương án phù hợp → **nhường quyền cho tài xế gọi điện như hiện tại**
 
-## 6. Tự kiểm trước khi nộp
+---
 
-- [ ] Có ít nhất 1 screenshot hoặc observation cụ thể.
-- [ ] Có đủ 4 paths hoặc nói rõ path nào chưa có trong product.
-- [ ] Finding được viết thành product decision, không chỉ là nhận xét.
-- [ ] Sketch có as-is và to-be.
-- [ ] Có một câu nói rõ finding này sẽ đổi gì trong SPEC.
+## 5. Auto/Aug decision
+
+☑ **Conditional automation**
+
+**Lý do chọn:**
+
+- Rủi ro về thực phẩm (dị ứng, ăn chay, tôn giáo, khẩu vị) rất cao
+- AI chỉ được tự động hóa khi confidence > 90%
+- Case còn lại phải chuyển sang human hoặc augment
+
+**Human role:**
+
+- Khách hàng: reviewer (khi AI auto), decider (khi AI augment)
+- Tài xế: rescuer (khi AI failure)
+
+---
+
+## 6. Four paths
+
+| Path           | Prototype phải thể hiện gì                                             |
+| -------------- | ---------------------------------------------------------------------- |
+| Happy          | AI auto-swap sang món phù hợp nhất. Có nút Undo trong 30s              |
+| Low-confidence | UI hiển thị 2–3 món AI lọc ra → khách chọn 1 tap                       |
+| Failure        | Popup: “Món hết, tài xế đang gọi…” + trigger call flow                 |
+| Correction     | Nếu user undo → log event vào system (ví dụ: “user không thích Pepsi”) |
+
+---
+
+## 7. Failure mode nguy hiểm nhất
+
+Nếu user **đặt món chay (salad)** nhưng quán chỉ còn **món mặn (thịt)**,  
+AI có thể:
+
+- sai lầm khi ưu tiên “giá trị tương đương” thay vì dietary rule
+
+Hậu quả:
+
+- vi phạm chế độ ăn chay / dị ứng
+- mất trust vĩnh viễn với user
+
+**Giải pháp trong prototype:**
+
+- Rule VETO: nếu sai dietary tag → trừ 100 điểm confidence → không được auto-swap
+- lập tức chuyển sang human fallback (tài xế gọi điện)
+
+Owner kiểm thử path này: **[Tên thành viên]**
+
+---
+
+## 8. Owner plan cho sáng Day 06
+
+| Thành viên | Việc phụ trách      | Bằng chứng cần có trong repo      |
+| ---------- | ------------------- | --------------------------------- |
+| Member 1   | Research / evidence | evidence-pack.md, app-teardown.md |
+| Member 1   | SPEC & Prompting    | thin-spec.md, prompt-test-log.md  |
+| Member 1   | Prototype (Code)    | Streamlit/Python app chạy local   |
+| Member 1   | Test / failure path | Video demo AI vào failure path    |
+| Member 1   | Demo script / repo  | Slide deck + narrative trình bày  |

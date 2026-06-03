@@ -1,72 +1,106 @@
-# Template — Evidence Pack
+# Workshop — Mổ App AI Thật
 
-Nộp kèm thin SPEC cuối Day 05.
+**Thời gian:** 45 phút  
+**Hình thức:** Cá nhân  
+**Người thực hiện:** [Tên của bạn]
 
-## 1. Nhóm và track
+---
 
-**Tên nhóm:**  
-**Track:**  
-**Product/app đã chọn:**  
-**Build slice đang nghĩ:**  
+## 1. Chọn một sản phẩm để dùng thử
 
-## 2. Self-use evidence
+| Sản phẩm          | AI feature                                                | Cách truy cập                                         |
+| ----------------- | --------------------------------------------------------- | ----------------------------------------------------- |
+| Grab / ShopeeFood | Flow xử lý sự cố “Hết món” hiện tại (Rule-based / Manual) | App Grab/ShopeeFood → Đặt đơn → Giả định quán hết món |
 
-Nhóm tự dùng app/workflow và ghi lại điểm gãy.
+**Ghi chú:**  
+Vì các app Food Delivery ở VN hiện chưa có AI xử lý luồng này, bài mổ này sẽ phân tích điểm gãy của flow manual hiện tại để chứng minh sự cần thiết của AI product định làm.
 
-| Observation | Screenshot/link | Path liên quan | Điều học được |
-|---|---|---|---|
-|  |  | Happy / Low-confidence / Failure / Correction |  |
-|  |  | Happy / Low-confidence / Failure / Correction |  |
+---
 
-## 3. User / review / social evidence
+## 2. Dùng thử: promise vs reality
 
-Nguồn có thể là review App Store/Play, group, comment, phỏng vấn nhanh, hoặc nguồn public khác.
+**Product hứa gì?**  
+Giao đồ ăn nhanh chóng, tiện lợi, không phiền hà.
 
-| Quote / review / observation | Nguồn | User là ai? | Pain/failure mode |
-|---|---|---|---|
-|  |  |  |  |
-|  |  |  |  |
-|  |  |  |  |
+**User nào được hứa sẽ được giúp?**  
+Người bận rộn đang làm việc, sinh viên, người dùng phổ thông.
 
-Nếu chưa có nguồn ngoài nhóm, ghi rõ:
+**Kỳ vọng làm được task nào?**  
+Đặt xong là rung đùi chờ đồ ăn tới, không phải can thiệp.
 
-```text
-Đây là giả định. Nhóm sẽ kiểm bằng [cách] trước checkpoint M1 Day 06.
-```
+### Khi dùng thật, điểm gãy xuất hiện ở đâu?
 
-## 4. Competitor / analog evidence
+- Quán hết nguyên liệu sau khi tài xế tới nơi
+- App bắt tài xế phải gọi điện cho khách để thỏa thuận đổi món
+- Khách đang họp / đang đi xe → lỡ cuộc gọi
 
-| App / mô hình tham khảo | Họ xử lý task này thế nào? | Pattern học được | Có áp dụng trong 1 ngày không? |
-|---|---|---|---|
-|  |  |  |  |
+**Hậu quả:**
 
-## 5. Evidence -> Insight
+- Đơn bị hủy (tài xế mất công)
+- Hoặc tài xế tự ý giao thiếu món (khách bực mình)
 
-```text
-Evidence nổi bật nhất:
+**Evidence:**
 
-Insight:
-User không chỉ gặp [surface problem].
-Thật ra họ cần [deeper need / decision support / trust / recovery].
+> Review thật trên App Store:  
+> “Tôi đặt combo gà rán mà hết nước ngọt, tài xế gọi không được nên tự ý hủy luôn đơn của tôi bắt tôi đợi 40 phút không có gì ăn.”
 
-Opportunity:
-AI có thể giúp bằng cách [augment/automate hành động hẹp].
-```
+---
 
-## 6. Evidence đổi SPEC như thế nào?
+## 3. Vẽ 4 paths (As-is: Tình trạng hiện tại của App)
 
-- [ ] Đổi user chính.
-- [ ] Đổi pain statement.
-- [ ] Đổi build slice.
-- [ ] Đổi Auto/Aug decision.
-- [ ] Đổi 4 paths.
-- [ ] Đổi failure mode.
-- [ ] Đổi owner/test plan.
+| Path           | Câu hỏi cần trả lời     | Tình trạng hiện tại của ShopeeFood/Grab                                                 |
+| -------------- | ----------------------- | --------------------------------------------------------------------------------------- |
+| Happy          | Khi mọi thứ trơn tru?   | Quán có đủ đồ → Tài xế lấy → Giao xong                                                  |
+| Low-confidence | Khi có sự cố (hết món)? | Hệ thống đẩy 100% rủi ro cho tài xế. Tài xế phải gọi điện giải quyết với khách          |
+| Failure        | Khi gọi điện thất bại?  | Tài xế hủy đơn (“Không liên lạc được khách” / “Quán hết món”). Cả 2 phía đều chịu UX tệ |
+| Correction     | Khi user phàn nàn?      | Gọi CSKH xin voucher đền bù (chi phí vận hành cao)                                      |
 
-Ghi rõ 1-2 thay đổi quan trọng:
+---
 
-```text
-Trước evidence, nhóm định...
-Sau evidence, nhóm đổi thành...
-Lý do:
-```
+## 4. Viết finding thành quyết định
+
+Thay vì viết:
+
+> “Quy trình đổi món của app hiện tại quá tệ và mất thời gian.”
+
+Viết lại thành product insight:
+
+Khi user (tài xế) **bấm nút báo quán hết một món**,  
+Product hiện tại **bắt buộc tài xế gọi điện thoại thủ công**,  
+Hậu quả là **tài xế mất 3–5 phút chờ đợi, khách dễ lỡ cuộc gọi dẫn đến hủy đơn oan**,  
+Lỗi thuộc layer **UX Recovery / Workflow Design**.
+
+### Nên sửa bằng:
+
+**Conditional Automation AI:**
+
+- AI tự động phân tích menu để auto-swap món phù hợp
+- Hoặc bắn push notification cho khách chọn nhanh trong app
+- Chỉ dùng human (call) như fallback cuối cùng
+
+---
+
+## 5. Sketch as-is / to-be
+
+### As-is (Hiện tại)
+
+Tài xế tới quán → Quán báo hết món → Tài xế mở app lấy số → Gọi điện → Khách không nghe máy → Chờ 5 phút → Hủy đơn → UX tệ
+
+---
+
+### To-be (Đề xuất có AI)
+
+Tài xế tới quán → Bấm “Hết món Pizza Bò” trên app →  
+AI Engine tính confidence score →
+
+- **> 90%:** Tự động đổi sang Pizza Gà + notify khách → Xong
+- **50–89%:** App khách bật popup chọn (Pizza Gà / Mỳ Ý) → 1 tap → Xong
+- **< 50%:** Gọi điện như hiện tại (fallback)
+
+---
+
+## 6. Tự kiểm trước khi nộp
+
+- [x] Có screenshot / observation cụ thể
+- [x] Có đủ 4 paths
+- [x] Finding được viết thành product decision
