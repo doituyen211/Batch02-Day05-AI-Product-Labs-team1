@@ -1,106 +1,75 @@
-# Workshop — Mổ App AI Thật
+# Template — Evidence Pack
 
-**Thời gian:** 45 phút  
-**Hình thức:** Cá nhân  
-**Người thực hiện:** Đới Trọng Tuyển
+## 1. Nhóm và track
 
----
+**Tên nhóm:** team1
+**Track:** Food & Local Delivery  
+**Product/app đã chọn:** GrabFood / ShopeeFood
 
-## 1. Chọn một sản phẩm để dùng thử
-
-| Sản phẩm          | AI feature                                                | Cách truy cập                                         |
-| ----------------- | --------------------------------------------------------- | ----------------------------------------------------- |
-| Grab / ShopeeFood | Flow xử lý sự cố “Hết món” hiện tại (Rule-based / Manual) | App Grab/ShopeeFood → Đặt đơn → Giả định quán hết món |
-
-**Ghi chú:**  
-Vì các app Food Delivery ở VN hiện chưa có AI xử lý luồng này, bài mổ này sẽ phân tích điểm gãy của flow manual hiện tại để chứng minh sự cần thiết của AI product định làm.
+**Build slice đang nghĩ:**  
+Smart Auto-Substitute Engine (Xử lý sự cố hết món tự động bằng AI Confidence Score).
 
 ---
 
-## 2. Dùng thử: promise vs reality
+## 2. Self-use evidence
 
-**Product hứa gì?**  
-Giao đồ ăn nhanh chóng, tiện lợi, không phiền hà.
-
-**User nào được hứa sẽ được giúp?**  
-Người bận rộn đang làm việc, sinh viên, người dùng phổ thông.
-
-**Kỳ vọng làm được task nào?**  
-Đặt xong là rung đùi chờ đồ ăn tới, không phải can thiệp.
-
-### Khi dùng thật, điểm gãy xuất hiện ở đâu?
-
-- Quán hết nguyên liệu sau khi tài xế tới nơi
-- App bắt tài xế phải gọi điện cho khách để thỏa thuận đổi món
-- Khách đang họp / đang đi xe → lỡ cuộc gọi
-
-**Hậu quả:**
-
-- Đơn bị hủy (tài xế mất công)
-- Hoặc tài xế tự ý giao thiếu món (khách bực mình)
-
-**Evidence:**
-
-> Review thật trên App Store:  
-> “Tôi đặt combo gà rán mà hết nước ngọt, tài xế gọi không được nên tự ý hủy luôn đơn của tôi bắt tôi đợi 40 phút không có gì ăn.”
+| Observation                                                                                                                       | Screenshot/link                | Path liên quan | Điều học được                                                                                                      |
+| --------------------------------------------------------------------------------------------------------------------------------- | ------------------------------ | -------------- | ------------------------------------------------------------------------------------------------------------------ |
+| Bản thân đang họp, đặt Highland Coffee. Quán hết bánh mỳ thịt nướng. Tài xế gọi không được nên hủy luôn nguyên đơn (cả cốc cafe). | (Lịch sử đơn hàng bị hủy)      | Failure        | Sự cố "Hết 1 món nhỏ" có thể phá hủy "Toàn bộ giá trị đơn hàng". Việc bắt khách nghe điện thoại là UX tồi.         |
+| Tài xế phải đứng bấm điện thoại, tranh cãi với chủ quán xem nên đổi món gì cho khách.                                             | (Quan sát thực tế tại quán ăn) | Low-confidence | Tài xế không có data về sở thích của khách để gợi ý đổi món. AI có thể làm việc này tốt hơn dựa vào lịch sử order. |
 
 ---
 
-## 3. Vẽ 4 paths (As-is: Tình trạng hiện tại của App)
+## 3. User / review / social evidence
 
-| Path           | Câu hỏi cần trả lời     | Tình trạng hiện tại của ShopeeFood/Grab                                                 |
-| -------------- | ----------------------- | --------------------------------------------------------------------------------------- |
-| Happy          | Khi mọi thứ trơn tru?   | Quán có đủ đồ → Tài xế lấy → Giao xong                                                  |
-| Low-confidence | Khi có sự cố (hết món)? | Hệ thống đẩy 100% rủi ro cho tài xế. Tài xế phải gọi điện giải quyết với khách          |
-| Failure        | Khi gọi điện thất bại?  | Tài xế hủy đơn (“Không liên lạc được khách” / “Quán hết món”). Cả 2 phía đều chịu UX tệ |
-| Correction     | Khi user phàn nàn?      | Gọi CSKH xin voucher đền bù (chi phí vận hành cao)                                      |
+| Quote / review / observation                                                                       | Nguồn                     | User là ai?     | Pain/failure mode                                                                                                        |
+| -------------------------------------------------------------------------------------------------- | ------------------------- | --------------- | ------------------------------------------------------------------------------------------------------------------------ |
+| "App tệ, tài xế tự ý đổi ly trà đào của tôi thành trà vải mà không hỏi ý kiến, tôi bị dị ứng vải!" | App Store Review (Grab)   | Khách hàng      | Tài xế tự quyết đổi món (Manual Rule) dẫn đến vi phạm dietary (dị ứng). Cần AI có fail-safe (Trừ 100 điểm nếu sai tags). |
+| "Mỗi lần quán hết món là xác định chuyến đó chạy không công vì chờ khách nghe máy mất 10 phút."    | Group FB Tài xế công nghệ | Tài xế (Driver) | Bottleneck thời gian chờ đợi.                                                                                            |
 
 ---
 
-## 4. Viết finding thành quyết định
+## 4. Competitor / analog evidence
 
-Thay vì viết:
-
-> “Quy trình đổi món của app hiện tại quá tệ và mất thời gian.”
-
-Viết lại thành product insight:
-
-Khi user (tài xế) **bấm nút báo quán hết một món**,  
-Product hiện tại **bắt buộc tài xế gọi điện thoại thủ công**,  
-Hậu quả là **tài xế mất 3–5 phút chờ đợi, khách dễ lỡ cuộc gọi dẫn đến hủy đơn oan**,  
-Lỗi thuộc layer **UX Recovery / Workflow Design**.
-
-### Nên sửa bằng:
-
-**Conditional Automation AI:**
-
-- AI tự động phân tích menu để auto-swap món phù hợp
-- Hoặc bắn push notification cho khách chọn nhanh trong app
-- Chỉ dùng human (call) như fallback cuối cùng
+| App / mô hình tham khảo | Họ xử lý task này thế nào?                                                                                        | Pattern học được                                                           | Có áp dụng trong 1 ngày không?                                                  |
+| ----------------------- | ----------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------- | ------------------------------------------------------------------------------- |
+| UberEats (US)           | Cho phép khách chọn sẵn "Substitute Preference" (Ví dụ: Nếu hết thì Hủy/Đổi món A/Tài xế tự chọn) lúc thanh toán. | Đẩy trách nhiệm dự đoán cho khách hàng lúc đặt đơn → làm dài flow checkout | Không nên bắt chước. Ta dùng AI xử lý real-time lúc sự cố xảy ra sẽ mượt UX hơn |
 
 ---
 
-## 5. Sketch as-is / to-be
+## 5. Evidence → Insight
 
-### As-is (Hiện tại)
+**Evidence nổi bật nhất:**  
+Cả tài xế và khách hàng đều sợ những cuộc điện thoại phát sinh khi quán hết đồ. Nhưng khách cũng cực kỳ ghét việc bị tự ý đổi món sai sở thích/dị ứng.
 
-Tài xế tới quán → Quán báo hết món → Tài xế mở app lấy số → Gọi điện → Khách không nghe máy → Chờ 5 phút → Hủy đơn → UX tệ
+**Insight:**  
+User (Khách) không chỉ cần **[được thông báo khi hết món]**,  
+họ thật ra cần **[giữ được quyền kiểm soát bữa ăn của mình một cách nhanh gọn nhất]**,  
+vì **[việc tự ý đổi món mặn/chay, hoặc gọi điện phiền hà đều dẫn đến rớt đơn]**.
+
+**Opportunity:**  
+AI có thể giúp bằng cách:
+
+- [tính toán độ phù hợp của menu còn lại để tự động đổi món hoặc cho khách chọn nhanh 1-chạm]
+- giúp user [nhận được đồ ăn thay thế tốt nhất mà không cần nghe điện thoại]
+- trong khi vẫn kiểm soát [failure/risk bằng cách bắt buộc tài xế gọi điện nếu AI điểm thấp]
 
 ---
 
-### To-be (Đề xuất có AI)
+## 6. Evidence đổi SPEC như thế nào?
 
-Tài xế tới quán → Bấm “Hết món Pizza Bò” trên app →  
-AI Engine tính confidence score →
+[x] Đổi Auto/Aug decision  
+[x] Đổi failure mode
 
-- **> 90%:** Tự động đổi sang Pizza Gà + notify khách → Xong
-- **50–89%:** App khách bật popup chọn (Pizza Gà / Mỳ Ý) → 1 tap → Xong
-- **< 50%:** Gọi điện như hiện tại (fallback)
+**Trước evidence, nhóm định:**  
+Bắt AI tự động đổi món (Auto-swap 100%) trong mọi trường hợp.
 
----
+**Sau evidence, nhóm đổi thành:**  
+Dùng Conditional Automation:
 
-## 6. Tự kiểm trước khi nộp
+- Tự động đổi nếu Conf > 90%
+- Bắt khách chọn trên app nếu 50–89%
+- Gọi điện nếu < 50%
 
-- [x] Có screenshot / observation cụ thể
-- [x] Có đủ 4 paths
-- [x] Finding được viết thành product decision
+**Lý do:**  
+Phát hiện rủi ro nghiêm trọng về dị ứng / ăn chay. Không thể để AI quyết định bừa nếu dữ liệu không chắc chắn.

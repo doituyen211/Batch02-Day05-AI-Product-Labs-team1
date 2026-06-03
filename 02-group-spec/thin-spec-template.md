@@ -1,106 +1,94 @@
-# Workshop — Mổ App AI Thật
+# Template — Thin SPEC Cuối Day 05
 
-**Thời gian:** 45 phút  
-**Hình thức:** Cá nhân  
-**Người thực hiện:** Đới Trọng Tuyển
+## 1. Track, product/app và user
 
----
+**Track:** Food & Local Delivery
 
-## 1. Chọn một sản phẩm để dùng thử
+**Product/app thật:** GrabFood / ShopeeFood
 
-| Sản phẩm          | AI feature                                                | Cách truy cập                                         |
-| ----------------- | --------------------------------------------------------- | ----------------------------------------------------- |
-| Grab / ShopeeFood | Flow xử lý sự cố “Hết món” hiện tại (Rule-based / Manual) | App Grab/ShopeeFood → Đặt đơn → Giả định quán hết món |
+**User cụ thể:**
 
-**Ghi chú:**  
-Vì các app Food Delivery ở VN hiện chưa có AI xử lý luồng này, bài mổ này sẽ phân tích điểm gãy của flow manual hiện tại để chứng minh sự cần thiết của AI product định làm.
+- Tài xế (người gặp sự cố)
+- Khách hàng (người cần giải quyết)
 
----
-
-## 2. Dùng thử: promise vs reality
-
-**Product hứa gì?**  
-Giao đồ ăn nhanh chóng, tiện lợi, không phiền hà.
-
-**User nào được hứa sẽ được giúp?**  
-Người bận rộn đang làm việc, sinh viên, người dùng phổ thông.
-
-**Kỳ vọng làm được task nào?**  
-Đặt xong là rung đùi chờ đồ ăn tới, không phải can thiệp.
-
-### Khi dùng thật, điểm gãy xuất hiện ở đâu?
-
-- Quán hết nguyên liệu sau khi tài xế tới nơi
-- App bắt tài xế phải gọi điện cho khách để thỏa thuận đổi món
-- Khách đang họp / đang đi xe → lỡ cuộc gọi
-
-**Hậu quả:**
-
-- Đơn bị hủy (tài xế mất công)
-- Hoặc tài xế tự ý giao thiếu món (khách bực mình)
-
-**Evidence:**
-
-> Review thật trên App Store:  
-> “Tôi đặt combo gà rán mà hết nước ngọt, tài xế gọi không được nên tự ý hủy luôn đơn của tôi bắt tôi đợi 40 phút không có gì ăn.”
+**Nhóm có phải user thật không? Nếu không, khác ở đâu?**  
+Có, các thành viên đều là end-user thường xuyên gặp tình trạng bị hủy đơn do lỡ cuộc gọi của tài xế.
 
 ---
 
-## 3. Vẽ 4 paths (As-is: Tình trạng hiện tại của App)
+## 2. Evidence summary
 
-| Path           | Câu hỏi cần trả lời     | Tình trạng hiện tại của ShopeeFood/Grab                                                 |
-| -------------- | ----------------------- | --------------------------------------------------------------------------------------- |
-| Happy          | Khi mọi thứ trơn tru?   | Quán có đủ đồ → Tài xế lấy → Giao xong                                                  |
-| Low-confidence | Khi có sự cố (hết món)? | Hệ thống đẩy 100% rủi ro cho tài xế. Tài xế phải gọi điện giải quyết với khách          |
-| Failure        | Khi gọi điện thất bại?  | Tài xế hủy đơn (“Không liên lạc được khách” / “Quán hết món”). Cả 2 phía đều chịu UX tệ |
-| Correction     | Khi user phàn nàn?      | Gọi CSKH xin voucher đền bù (chi phí vận hành cao)                                      |
+| Evidence                                                             | Nguồn        | User/pain nói lên điều gì?                                          | SPEC phải đổi gì?                                                       |
+| -------------------------------------------------------------------- | ------------ | ------------------------------------------------------------------- | ----------------------------------------------------------------------- |
+| Đơn hủy vì khách không nghe máy xác nhận đổi món                     | Group Tài Xế | Nút thắt cổ chai nằm ở cuộc gọi điện thoại thủ công                 | Phải làm UI Notification In-app để khách quyết định 1-chạm              |
+| Review chửi bới vì tài xế tự đổi trà đào sang trà vải (khách dị ứng) | App Store    | Đổi món sai sở thích/dị ứng gây hậu quả nặng nề hơn cả việc hủy đơn | AI không được phép đoán mò. Phải có cơ chế Failure/Veto (Trừ điểm về 0) |
 
 ---
 
-## 4. Viết finding thành quyết định
+## 3. Pain statement
 
-Thay vì viết:
+User **[Tài xế và Khách hàng]** đang gặp khó ở **[bước xử lý sự cố hết món tại quán]**,  
+vì **[hệ thống hiện tại bắt buộc phải gọi điện thoại thủ công]**,  
+dẫn tới **[tài xế lãng phí thời gian chờ, khách hàng dễ bị hủy đơn oan nếu bận họp]**.
 
-> “Quy trình đổi món của app hiện tại quá tệ và mất thời gian.”
-
-Viết lại thành product insight:
-
-Khi user (tài xế) **bấm nút báo quán hết một món**,  
-Product hiện tại **bắt buộc tài xế gọi điện thoại thủ công**,  
-Hậu quả là **tài xế mất 3–5 phút chờ đợi, khách dễ lỡ cuộc gọi dẫn đến hủy đơn oan**,  
-Lỗi thuộc layer **UX Recovery / Workflow Design**.
-
-### Nên sửa bằng:
-
-**Conditional Automation AI:**
-
-- AI tự động phân tích menu để auto-swap món phù hợp
-- Hoặc bắn push notification cho khách chọn nhanh trong app
-- Chỉ dùng human (call) như fallback cuối cùng
+Bằng chứng chính là **[hàng loạt review 1 sao phàn nàn về việc giao thiếu món hoặc hủy đơn không báo trước]**.
 
 ---
 
-## 5. Sketch as-is / to-be
+## 4. Build slice
 
-### As-is (Hiện tại)
-
-Tài xế tới quán → Quán báo hết món → Tài xế mở app lấy số → Gọi điện → Khách không nghe máy → Chờ 5 phút → Hủy đơn → UX tệ
-
----
-
-### To-be (Đề xuất có AI)
-
-Tài xế tới quán → Bấm “Hết món Pizza Bò” trên app →  
-AI Engine tính confidence score →
-
-- **> 90%:** Tự động đổi sang Pizza Gà + notify khách → Xong
-- **50–89%:** App khách bật popup chọn (Pizza Gà / Mỳ Ý) → 1 tap → Xong
-- **< 50%:** Gọi điện như hiện tại (fallback)
+Cho **[Khách hàng] đang [chờ giao đơn Food Delivery]**,  
+prototype sẽ dùng AI để **[automate đổi món tự động hoặc augment gợi ý lựa chọn in-app tùy theo Confidence Score]**,  
+tạo ra **[Push Notification UI cho khách xác nhận trong 30s–60s]**,  
+và xử lý **[failure mode - AI không tìm được món phù hợp]** bằng **[mitigation - Dừng AI và nhường quyền cho Tài xế gọi điện như cũ]**.
 
 ---
 
-## 6. Tự kiểm trước khi nộp
+## 5. Auto/Aug decision
 
-- [x] Có screenshot / observation cụ thể
-- [x] Có đủ 4 paths
-- [x] Finding được viết thành product decision
+**Chọn một:**
+
+[x] Conditional automation: AI tự làm trong case hẹp; case mơ hồ/rủi ro chuyển người.
+
+**Lý do chọn:**  
+Sự an toàn về thực phẩm (ăn chay, dị ứng, khẩu vị cay/ngọt) rất quan trọng. AI chỉ được tự làm khi tự tin >90% (vd: hết Coca đổi Pepsi).
+
+**Human role:**
+
+- Khách hàng: reviewer (nếu AI auto), decider (nếu AI augment)
+- Tài xế: rescuer (nếu AI failure)
+
+---
+
+## 6. Four paths
+
+| Path           | Prototype phải thể hiện gì?                                                                            |
+| -------------- | ------------------------------------------------------------------------------------------------------ |
+| Happy          | Giao diện khách hàng tự động đổi sang món thay thế phù hợp nhất (Auto-swap). Có nút Undo đếm ngược 30s |
+| Low-confidence | UI hiển thị danh sách 2 món do AI lọc ra, yêu cầu khách chạm để chọn (Augment)                         |
+| Failure        | UI khách hàng nhảy popup: "Món hết, tài xế đang gọi...". UI tài xế nhận lệnh: "Yêu cầu gọi điện"       |
+| Correction     | Khi khách bấm Undo ở Happy Path, log JSON ghi nhận "User X không thích Pepsi" để nạp lại vào Rule DB   |
+
+---
+
+## 7. Failure mode nguy hiểm nhất
+
+Nếu user **[gọi món Chay (Salad) nhưng quán chỉ còn đồ Mặn (Thịt)]**,  
+AI có thể **[failure: gợi ý đổi sang đồ mặn do bằng giá tiền]**,  
+hậu quả là **[impact: xúc phạm tín ngưỡng ăn chay, mất khách vĩnh viễn]**.
+
+Prototype sẽ xử lý bằng **[fallback: Trong prompt quy định Rule VETO trừ 100 điểm nếu sai tag dietary. AI sẽ lập tức nhả quyền để tài xế gọi điện (human fallback)]**.
+
+Owner kiểm thử path này là **[Tên thành viên]**.
+
+---
+
+## 8. Owner plan cho sáng Day 06
+
+| Thành viên      | Việc phụ trách      | Bằng chứng cần có trong repo                       |
+| --------------- | ------------------- | -------------------------------------------------- |
+| Đới Trọng Tuyển | Research / evidence | `evidence-pack.md`, `app-teardown.md` hoàn thiện   |
+| Đới Trọng Tuyển | SPEC & Prompting    | `thin-spec.md` và `prompt-test-log.md`             |
+| Đới Trọng Tuyển | Prototype (Code)    | Source code Streamlit App (Python) chạy được local |
+| Đới Trọng Tuyển | Test / failure path | Video màn hình chứng minh AI đi vào Path Failure   |
+| Đới Trọng Tuyển | Demo script / repo  | Slide Deck (HTML) và Narrative trình bày           |

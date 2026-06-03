@@ -1,118 +1,106 @@
-# Template — Thin SPEC Cuối Day 05
+# Workshop — Mổ App AI Thật
+
+**Thời gian:** 45 phút  
+**Hình thức:** Cá nhân  
+**Người thực hiện:** Đới Trọng Tuyển
 
 ---
 
-## 1. Track, product/app và user
+## 1. Chọn một sản phẩm để dùng thử
 
-**Track:** Food & Local Delivery
+| Sản phẩm          | AI feature                                                | Cách truy cập                                         |
+| ----------------- | --------------------------------------------------------- | ----------------------------------------------------- |
+| Grab / ShopeeFood | Flow xử lý sự cố “Hết món” hiện tại (Rule-based / Manual) | App Grab/ShopeeFood → Đặt đơn → Giả định quán hết món |
 
-**Product/app thật:** GrabFood / ShopeeFood
-
-**User cụ thể:**
-
-- Tài xế (người gặp sự cố)
-- Khách hàng (người cần giải quyết đơn hàng)
-
-**Nhóm có phải user thật không? Nếu không, khác ở đâu?**  
-Có. Các thành viên đều là end-user thường xuyên sử dụng food delivery và từng gặp tình huống bị hủy đơn do lỡ cuộc gọi của tài xế hoặc quán hết món.
+**Ghi chú:**  
+Vì các app Food Delivery ở VN hiện chưa có AI xử lý luồng này, bài mổ này sẽ phân tích điểm gãy của flow manual hiện tại để chứng minh sự cần thiết của AI product định làm.
 
 ---
 
-## 2. Evidence summary
+## 2. Dùng thử: promise vs reality
 
-| Evidence                                                     | Nguồn        | User / pain nói lên điều gì?                             | SPEC phải đổi gì?                                                              |
-| ------------------------------------------------------------ | ------------ | -------------------------------------------------------- | ------------------------------------------------------------------------------ |
-| Đơn bị hủy vì khách không nghe máy xác nhận đổi món          | Group tài xế | Nút thắt cổ chai nằm ở cuộc gọi điện thoại thủ công      | Phải làm UI notification in-app để khách quyết định 1-chạm                     |
-| Review chửi vì tài xế tự đổi trà đào sang trà vải gây dị ứng | App Store    | Đổi món sai gây hậu quả nghiêm trọng hơn cả việc hủy đơn | AI không được đoán mò → cần cơ chế failure / veto (score = 0 → human fallback) |
+**Product hứa gì?**  
+Giao đồ ăn nhanh chóng, tiện lợi, không phiền hà.
 
----
+**User nào được hứa sẽ được giúp?**  
+Người bận rộn đang làm việc, sinh viên, người dùng phổ thông.
 
-## 3. Pain statement
+**Kỳ vọng làm được task nào?**  
+Đặt xong là rung đùi chờ đồ ăn tới, không phải can thiệp.
 
-User **(tài xế và khách hàng)** đang gặp khó ở **bước xử lý sự cố hết món tại quán**,  
-vì **hệ thống hiện tại bắt buộc phải gọi điện thoại thủ công**,  
-dẫn tới:
+### Khi dùng thật, điểm gãy xuất hiện ở đâu?
 
-- tài xế mất thời gian chờ và xử lý
-- khách hàng dễ bị hủy đơn oan nếu đang bận / không nghe máy
+- Quán hết nguyên liệu sau khi tài xế tới nơi
+- App bắt tài xế phải gọi điện cho khách để thỏa thuận đổi món
+- Khách đang họp / đang đi xe → lỡ cuộc gọi
 
-Bằng chứng chính là **hàng loạt review 1 sao và phản ánh từ cộng đồng tài xế về giao thiếu món hoặc hủy đơn không rõ lý do**.
+**Hậu quả:**
 
----
+- Đơn bị hủy (tài xế mất công)
+- Hoặc tài xế tự ý giao thiếu món (khách bực mình)
 
-## 4. Build slice
+**Evidence:**
 
-Cho **khách hàng** đang **chờ giao đơn food delivery**,  
-prototype sẽ dùng AI để:
-
-- automate việc đổi món khi đủ chắc chắn
-- hoặc augment bằng cách gợi ý lựa chọn trong app theo confidence score
-
-Tạo ra:
-
-- **Push notification UI cho khách xác nhận trong 30–60 giây**
-
-Xử lý failure mode:
-
-- nếu AI không tìm được phương án phù hợp → **nhường quyền cho tài xế gọi điện như hiện tại**
+> Review thật trên App Store:  
+> “Tôi đặt combo gà rán mà hết nước ngọt, tài xế gọi không được nên tự ý hủy luôn đơn của tôi bắt tôi đợi 40 phút không có gì ăn.”
 
 ---
 
-## 5. Auto/Aug decision
+## 3. Vẽ 4 paths (As-is: Tình trạng hiện tại của App)
 
-☑ **Conditional automation**
-
-**Lý do chọn:**
-
-- Rủi ro về thực phẩm (dị ứng, ăn chay, tôn giáo, khẩu vị) rất cao
-- AI chỉ được tự động hóa khi confidence > 90%
-- Case còn lại phải chuyển sang human hoặc augment
-
-**Human role:**
-
-- Khách hàng: reviewer (khi AI auto), decider (khi AI augment)
-- Tài xế: rescuer (khi AI failure)
+| Path           | Câu hỏi cần trả lời     | Tình trạng hiện tại của ShopeeFood/Grab                                                 |
+| -------------- | ----------------------- | --------------------------------------------------------------------------------------- |
+| Happy          | Khi mọi thứ trơn tru?   | Quán có đủ đồ → Tài xế lấy → Giao xong                                                  |
+| Low-confidence | Khi có sự cố (hết món)? | Hệ thống đẩy 100% rủi ro cho tài xế. Tài xế phải gọi điện giải quyết với khách          |
+| Failure        | Khi gọi điện thất bại?  | Tài xế hủy đơn (“Không liên lạc được khách” / “Quán hết món”). Cả 2 phía đều chịu UX tệ |
+| Correction     | Khi user phàn nàn?      | Gọi CSKH xin voucher đền bù (chi phí vận hành cao)                                      |
 
 ---
 
-## 6. Four paths
+## 4. Viết finding thành quyết định
 
-| Path           | Prototype phải thể hiện gì                                             |
-| -------------- | ---------------------------------------------------------------------- |
-| Happy          | AI auto-swap sang món phù hợp nhất. Có nút Undo trong 30s              |
-| Low-confidence | UI hiển thị 2–3 món AI lọc ra → khách chọn 1 tap                       |
-| Failure        | Popup: “Món hết, tài xế đang gọi…” + trigger call flow                 |
-| Correction     | Nếu user undo → log event vào system (ví dụ: “user không thích Pepsi”) |
+Thay vì viết:
 
----
+> “Quy trình đổi món của app hiện tại quá tệ và mất thời gian.”
 
-## 7. Failure mode nguy hiểm nhất
+Viết lại thành product insight:
 
-Nếu user **đặt món chay (salad)** nhưng quán chỉ còn **món mặn (thịt)**,  
-AI có thể:
+Khi user (tài xế) **bấm nút báo quán hết một món**,  
+Product hiện tại **bắt buộc tài xế gọi điện thoại thủ công**,  
+Hậu quả là **tài xế mất 3–5 phút chờ đợi, khách dễ lỡ cuộc gọi dẫn đến hủy đơn oan**,  
+Lỗi thuộc layer **UX Recovery / Workflow Design**.
 
-- sai lầm khi ưu tiên “giá trị tương đương” thay vì dietary rule
+### Nên sửa bằng:
 
-Hậu quả:
+**Conditional Automation AI:**
 
-- vi phạm chế độ ăn chay / dị ứng
-- mất trust vĩnh viễn với user
-
-**Giải pháp trong prototype:**
-
-- Rule VETO: nếu sai dietary tag → trừ 100 điểm confidence → không được auto-swap
-- lập tức chuyển sang human fallback (tài xế gọi điện)
-
-Owner kiểm thử path này: **[Tên thành viên]**
+- AI tự động phân tích menu để auto-swap món phù hợp
+- Hoặc bắn push notification cho khách chọn nhanh trong app
+- Chỉ dùng human (call) như fallback cuối cùng
 
 ---
 
-## 8. Owner plan cho sáng Day 06
+## 5. Sketch as-is / to-be
 
-| Thành viên      | Việc phụ trách      | Bằng chứng cần có trong repo      |
-| --------------- | ------------------- | --------------------------------- |
-| Đới Trọng Tuyển | Research / evidence | evidence-pack.md, app-teardown.md |
-| Đới Trọng Tuyển | SPEC & Prompting    | thin-spec.md, prompt-test-log.md  |
-| Đới Trọng Tuyển | Prototype (Code)    | Streamlit/Python app chạy local   |
-| Đới Trọng Tuyển | Test / failure path | Video demo AI vào failure path    |
-| Đới Trọng Tuyển | Demo script / repo  | Slide deck + narrative trình bày  |
+### As-is (Hiện tại)
+
+Tài xế tới quán → Quán báo hết món → Tài xế mở app lấy số → Gọi điện → Khách không nghe máy → Chờ 5 phút → Hủy đơn → UX tệ
+
+---
+
+### To-be (Đề xuất có AI)
+
+Tài xế tới quán → Bấm “Hết món Pizza Bò” trên app →  
+AI Engine tính confidence score →
+
+- **> 90%:** Tự động đổi sang Pizza Gà + notify khách → Xong
+- **50–89%:** App khách bật popup chọn (Pizza Gà / Mỳ Ý) → 1 tap → Xong
+- **< 50%:** Gọi điện như hiện tại (fallback)
+
+---
+
+## 6. Tự kiểm trước khi nộp
+
+- [x] Có screenshot / observation cụ thể
+- [x] Có đủ 4 paths
+- [x] Finding được viết thành product decision
