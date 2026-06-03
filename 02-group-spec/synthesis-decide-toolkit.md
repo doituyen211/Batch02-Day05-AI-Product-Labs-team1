@@ -1,5 +1,7 @@
 # Toolkit — Từ Evidence Đến Build Slice
 
+Dùng sau khi nhóm đã có evidence. Mục tiêu là chốt một build slice đủ nhỏ cho Day 06.
+
 ---
 
 ## 1. Gom evidence thành cụm

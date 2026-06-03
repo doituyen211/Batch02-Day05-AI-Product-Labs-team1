@@ -109,10 +109,10 @@ Owner kiểm thử path này: **[Tên thành viên]**
 
 ## 8. Owner plan cho sáng Day 06
 
-| Thành viên | Việc phụ trách      | Bằng chứng cần có trong repo      |
-| ---------- | ------------------- | --------------------------------- |
-| Member 1   | Research / evidence | evidence-pack.md, app-teardown.md |
-| Member 1   | SPEC & Prompting    | thin-spec.md, prompt-test-log.md  |
-| Member 1   | Prototype (Code)    | Streamlit/Python app chạy local   |
-| Member 1   | Test / failure path | Video demo AI vào failure path    |
-| Member 1   | Demo script / repo  | Slide deck + narrative trình bày  |
+| Thành viên      | Việc phụ trách      | Bằng chứng cần có trong repo      |
+| --------------- | ------------------- | --------------------------------- |
+| Đới Trọng Tuyển | Research / evidence | evidence-pack.md, app-teardown.md |
+| Đới Trọng Tuyển | SPEC & Prompting    | thin-spec.md, prompt-test-log.md  |
+| Đới Trọng Tuyển | Prototype (Code)    | Streamlit/Python app chạy local   |
+| Đới Trọng Tuyển | Test / failure path | Video demo AI vào failure path    |
+| Đới Trọng Tuyển | Demo script / repo  | Slide deck + narrative trình bày  |
